@@ -1,0 +1,14 @@
+{
+  "name": "chatgpt-ads",
+  "version": "0.4.0",
+  "description": "Universal AI knowledge and guarded operating skill pack for ChatGPT Ads research, planning, creative, measurement, and ad operations.",
+  "author": {
+    "name": "Mamdouh Aboammar",
+    "url": "https://github.com/imMamdouhaboammar"
+  },
+  "homepage": "https://github.com/imMamdouhaboammar/chatgpt-ads",
+  "repository": "https://github.com/imMamdouhaboammar/chatgpt-ads.git",
+  "entrypoint": "SKILL.md",
+  "skills": "skills",
+  "license": "MIT"
+}

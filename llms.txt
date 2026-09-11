@@ -1,0 +1,37 @@
+# ChatGPT Ads Multi-Agent System
+
+> Universal AI knowledge base and operating skill pack for ChatGPT Ads research, planning, creative generation, measurement, and guarded automation across Claude, Codex, Cursor, and Gemini CLI.
+
+- Author: Mamdouh Aboammar (https://github.com/imMamdouhaboammar)
+- Repository: https://github.com/imMamdouhaboammar/chatgpt-ads
+- Version: 0.4.0
+- License: MIT
+
+## Core Overview
+ChatGPT Ads is an independent, MIT-licensed knowledge and operating engine designed for AI agents and developers building automated, privacy-preserving advertising workflows on ChatGPT. It adheres to strict fail-closed security invariants, POSIX descriptor-backed path traversal (O_NOFOLLOW), and deterministic evidence tracking.
+
+## Architecture & Skill Manifests
+- [Main Skill Orchestrator](SKILL.md): Master router dispatching across 12 domain skills.
+- [OpenAI Codex Plugin Manifest](.codex-plugin/plugin.json): Configuration for OpenAI Codex and ChatGPT developer sessions.
+- [Claude Marketplace Manifest](marketplace.json): Plugin schema specification for Claude Desktop and Claude Code.
+- [Skills.sh Registry Manifest](.skills.json): Hub listing enabling `npx skills add imMamdouhaboammar/chatgpt-ads`.
+- [Knowledge Brain Index](brain/index.md): Sourced facts, claims, and verified citations.
+
+## The 12 Domain Skills
+1. `chatgpt-ads`: Orchestrator and workflow router.
+2. `chatgpt-ads-research`: Sourced platform evidence verification and ledger queries.
+3. `chatgpt-ads-readiness`: Client eligibility, ad policy prerequisites, and account setup.
+4. `chatgpt-ads-plan`: Campaign strategy, pacing budgets, and unit economics.
+5. `chatgpt-ads-creative`: Ad copy briefs, multi-modal prompt variations, and compliance.
+6. `chatgpt-ads-measurement`: Attribution modeling, conversion tracking, and tracking integrity.
+7. `chatgpt-ads-analyze`: Performance diagnostics, funnel degradation, and anomaly analysis.
+8. `chatgpt-ads-experiment`: Geo-lift and A/B split testing methodology.
+9. `chatgpt-ads-policy`: Advertising guidelines and regulatory constraints.
+10. `chatgpt-ads-launch`: Staged change validation and batch verification.
+11. `chatgpt-ads-operate`: Guarded account operations with local checkpoint locks.
+12. `chatgpt-ads-monitor`: Pacing alerts, drift monitoring, and anomaly detection.
+
+## CLI & Runtime Invariants
+- Safe I/O: POSIX descriptor-backed no-follow traversal, Darwin root alias normalization.
+- Zero credential leakage: Scanned against secret patterns before public release.
+- Bounded local queries: `python3 -m chatgpt_ads_brain query "<question>"`.

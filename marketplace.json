@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-plugin-manifest.json",
+  "name": "chatgpt-ads",
+  "displayName": "ChatGPT Ads Brain & Operating Engine",
+  "version": "0.4.0",
+  "description": "Independent knowledge and operating-skill pack for research, planning, creative, measurement, and guarded ChatGPT Ads workflows across Claude, Codex, Cursor, and Gemini CLI.",
+  "author": {
+    "name": "Mamdouh Aboammar",
+    "url": "https://github.com/imMamdouhaboammar"
+  },
+  "homepage": "https://skills.sh/chatgpt-ads",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imMamdouhaboammar/chatgpt-ads.git"
+  },
+  "license": "MIT",
+  "categories": [
+    "marketing",
+    "automation",
+    "developer-tools",
+    "agent-tools"
+  ],
+  "compatibility": {
+    "claudeCode": ">=1.0.0",
+    "claudeDesktop": ">=1.0.0",
+    "cursor": ">=0.40.0",
+    "codex": ">=0.1.0",
+    "opencode": ">=1.0.0",
+    "antigravity": ">=1.0.0"
+  },
+  "entrypoint": "SKILL.md",
+  "skills": "skills",
+  "bin": {
+    "chatgpt-ads": "./bin/cli.js"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "chatgpt-ads",
+  "version": "0.4.0",
+  "description": "ChatGPT Ads operating engine and sourced intelligence pack for Claude.",
+  "author": {
+    "name": "Mamdouh Aboammar",
+    "url": "https://github.com/imMamdouhaboammar"
+  },
+  "entrypoint": "SKILL.md",
+  "skills": "skills"
+}

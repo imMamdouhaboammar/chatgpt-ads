@@ -1,0 +1,40 @@
+{
+  "name": "chatgpt-ads-brain",
+  "version": "0.4.0",
+  "description": "Universal AI knowledge and operating-skill pack for ChatGPT Ads research, planning, creative, measurement, and guarded automation.",
+  "type": "module",
+  "main": "bin/cli.js",
+  "bin": {
+    "chatgpt-ads": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imMamdouhaboammar/chatgpt-ads.git"
+  },
+  "homepage": "https://github.com/imMamdouhaboammar/chatgpt-ads",
+  "bugs": {
+    "url": "https://github.com/imMamdouhaboammar/chatgpt-ads/issues"
+  },
+  "keywords": [
+    "agent-skill",
+    "skills-sh",
+    "claude-code",
+    "cursor",
+    "codex",
+    "gemini-cli",
+    "antigravity",
+    "bun",
+    "chatgpt-ads",
+    "advertising-automation"
+  ],
+  "author": "Mamdouh Aboammar <https://github.com/imMamdouhaboammar>",
+  "license": "MIT",
+  "scripts": {
+    "start": "bun bin/cli.js",
+    "test": "python3 -m unittest discover -s tests -p 'test_*.py'"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  }
+}
