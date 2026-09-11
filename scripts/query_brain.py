@@ -5,21 +5,24 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 from datetime import date
 from pathlib import Path
 from typing import Any
-try:
-    from scripts.knowledge_core import maintenance_state
-except ModuleNotFoundError:
-    from knowledge_core import maintenance_state
-
-from knowledge_core import KnowledgeCoreError, validate_registries
-
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from chatgpt_ads_brain.retrieval import terms as retrieval_terms
+
+try:
+    from scripts.knowledge_core import KnowledgeCoreError, maintenance_state, validate_registries
+except ModuleNotFoundError:
+    from knowledge_core import KnowledgeCoreError, maintenance_state, validate_registries
+
+
 MAX_QUERY_CHARS = 2_000
-MAX_TERMS = 200
 RESOLVED_CONTRADICTION_STATUSES = {"resolved", "closed", "superseded"}
 SAFE_SOURCE_TYPES = {
     "official", "primary", "regulator", "academic", "independent",
@@ -28,8 +31,8 @@ SAFE_SOURCE_TYPES = {
 UNSAFE_CLAIM_STATES = {"needs_review", "contested", "refuted", "superseded"}
 
 
-def _terms(text: str) -> set[str]:
-    return set(re.findall(r"[a-z0-9_]+", text.lower())[:MAX_TERMS])
+def _terms(text: str, *, expand_aliases: bool = True) -> set[str]:
+    return retrieval_terms(text, expand_aliases=expand_aliases)
 
 
 def _freshness(source: dict[str, Any], as_of: str) -> tuple[str, list[dict[str, Any]]]:
@@ -90,7 +93,7 @@ def _active_conflicts(contradictions: list[Any]) -> tuple[set[str], set[str], di
         if not isinstance(item, dict):
             continue
         status = str(item.get("status", "unresolved")).lower()
-        if status in RESOLVED_CONTRADICTION_STATUSES or status.startswith("resolved_"):
+        if status in RESOLVED_CONTRADICTION_STATUSES:
             continue
         conflict_id = str(item.get("id", "unidentified-contradiction"))
         refs = item.get("evidence_refs", [])
@@ -124,7 +127,7 @@ def query(
     brain_root = root or ROOT
     maintenance = maintenance_state(brain_root)
     if maintenance['status'] != 'clean':
-        return {'status': 'blocked', 'as_of': as_of, 'retrieval': 'bounded_lexical_not_semantic',
+        return {'status': 'blocked', 'as_of': as_of, 'retrieval': 'offline_hybrid_lexical_not_semantic',
                 'results': [], 'withheld_claims': [], 'withheld_stale_claims': [],
                 'live_verification': False, 'reason': 'knowledge_maintenance_incomplete',
                 'maintenance': maintenance}
@@ -169,7 +172,7 @@ def query(
         if not isinstance(claim, dict) or not isinstance(claim.get("id"), str):
             continue
         haystack = " ".join(str(claim.get(field, "")) for field in ("id", "claim", "recommendation", "lane"))
-        score = len(words & _terms(haystack))
+        score = len(words & _terms(haystack, expand_aliases=False))
         if not score:
             continue
         reasons: list[dict[str, Any]] = []
@@ -201,7 +204,19 @@ def query(
         if not claim_source_ids:
             reasons.append({"code": "missing_source_refs"})
         if claim["id"] in contradiction_claims:
-            reasons.append({"code": "unresolved_contradiction", "claim_id": claim["id"]})
+            contradiction_ids = [
+                str(item.get("id", "unidentified-contradiction"))
+                for item in contradictions
+                if isinstance(item, dict)
+                and str(item.get("status", "unresolved")).lower() not in RESOLVED_CONTRADICTION_STATUSES
+                and isinstance(item.get("claim_ids"), list)
+                and claim["id"] in item["claim_ids"]
+            ]
+            reasons.append({
+                "code": "unresolved_contradiction",
+                "claim_id": claim["id"],
+                "contradiction_ids": contradiction_ids,
+            })
         claim_status = str(claim.get("status", "active")).lower()
         claim_support = str(claim.get("support", "")).lower()
         unsafe_state = next(
@@ -254,13 +269,18 @@ def query(
     elif registry_issues:
         status = "blocked"
     elif withheld:
-        status = "needs_refresh" if len(stale_ids) == len(withheld) else "blocked"
+        stale_only = all(
+            item["reasons"]
+            and all(reason["code"] == "source_stale" for reason in item["reasons"])
+            for item in withheld
+        )
+        status = "needs_refresh" if stale_only else "blocked"
     else:
         status = "no_data"
     return {
         "status": status,
         "as_of": as_of,
-        "retrieval": "bounded_lexical_not_semantic",
+        "retrieval": "offline_hybrid_lexical_not_semantic",
         "results": results,
         "withheld_claims": withheld,
         "withheld_stale_claims": stale_ids,

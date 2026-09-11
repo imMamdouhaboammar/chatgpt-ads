@@ -453,6 +453,65 @@ core.apply_proposal(root, proposal)
         self.assertFalse(contested["results"])
         self.assertEqual(contested["withheld_claims"][0]["reasons"][0]["code"], "claim_state_unsafe")
 
+    def test_retrieval_supports_arabic_english_and_mixed_queries(self):
+        self.fixture.write("references/claims.json", {
+            "version": 1,
+            "claims": [claim(
+                claim="Conversion measurement reports attributed conversions.",
+                recommendation="Calculate cost per acquisition (CPA) from compatible spend and conversions.",
+            )],
+        })
+        queries = (
+            "كيف احسب تكلفة التحويل؟",
+            "cost per conversion",
+            "CPA",
+            "تكلفة الاكتساب",
+            "conversion attribution",
+            "قياس التحويلات",
+            "قياس conversion و CPA",
+        )
+        for text in queries:
+            with self.subTest(text=text):
+                result = query(text, as_of="2026-02-01", root=self.fixture.root)
+                self.assertEqual(result["status"], "ok")
+                self.assertEqual([item["id"] for item in result["results"]], ["claim-one"])
+
+    def test_arabic_retrieval_preserves_stale_and_contradiction_gates(self):
+        self.fixture.write("references/claims.json", {
+            "version": 1,
+            "claims": [claim(claim="Conversion measurement and CPA guidance.")],
+        })
+        stale = query("تكلفة التحويل", as_of="2099-01-01", root=self.fixture.root)
+        self.assertEqual(stale["status"], "needs_refresh")
+        self.assertEqual(stale["results"], [])
+        self.fixture.write("references/contradictions.json", {
+            "contradictions": [{"id": "conflict-one", "status": "unresolved", "claim_ids": ["claim-one"]}]
+        })
+        contradicted = query("قياس التحويلات", as_of="2026-02-01", root=self.fixture.root)
+        self.assertEqual(contradicted["status"], "blocked")
+        self.assertEqual(contradicted["results"], [])
+
+    def test_stale_plus_contradiction_remains_blocked(self):
+        self.fixture.write("references/claims.json", {
+            "version": 1,
+            "claims": [claim(claim="Conversion measurement and CPA guidance.")],
+        })
+        self.fixture.write("references/contradictions.json", {
+            "contradictions": [{"id": "conflict-one", "status": "unresolved", "claim_ids": ["claim-one"]}]
+        })
+        result = query("تكلفة التحويل", as_of="2099-01-01", root=self.fixture.root)
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["withheld_stale_claims"], ["claim-one"])
+
+    def test_unverified_resolution_does_not_bypass_contradiction(self):
+        self.fixture.write("references/contradictions.json", {
+            "contradictions": [{"id": "conflict-one", "status": "resolved_unverified", "claim_ids": ["claim-one"]}]
+        })
+        result = query("alpha budget", as_of="2026-02-01", root=self.fixture.root)
+        self.assertEqual(result["status"], "blocked")
+        reason = result["withheld_claims"][0]["reasons"][-1]
+        self.assertEqual(reason["contradiction_ids"], ["conflict-one"])
+
     def test_projection_sync_writes_only_generated_json(self):
         root = self.fixture.root
         before_note = self.fixture.note.read_bytes()

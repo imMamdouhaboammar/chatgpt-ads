@@ -1,6 +1,15 @@
-"""ChatGPT Ads local knowledge and operating tools."""
+"""ChatGPT Ads local knowledge and read-only account tools."""
+from __future__ import annotations
 
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 import tomllib
 
-__version__ = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+_source_metadata = Path(__file__).resolve().parents[1] / "pyproject.toml"
+if _source_metadata.is_file():
+    __version__ = tomllib.loads(_source_metadata.read_text(encoding="utf-8"))["project"]["version"]
+else:
+    try:
+        __version__ = version("chatgpt-ads-brain")
+    except PackageNotFoundError:
+        __version__ = "unknown"

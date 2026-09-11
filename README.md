@@ -3,16 +3,26 @@
 ![ChatGPT Ads: Research. Plan. Create. Measure.](assets/chatgpt-ads-cover.webp)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/Release-v0.4.0-success.svg)](https://github.com/imMamdouhaboammar/chatgpt-ads/releases)
+![Local development](https://img.shields.io/badge/Local%20development-v0.5.0-blue.svg)
 [![CI](https://github.com/imMamdouhaboammar/chatgpt-ads/actions/workflows/ci.yml/badge.svg)](https://github.com/imMamdouhaboammar/chatgpt-ads/actions/workflows/ci.yml)
 [![Claude Plugin](https://img.shields.io/badge/Claude-Marketplace%20Ready-purple.svg)](marketplace.json)
 [![OpenAI Codex](https://img.shields.io/badge/OpenAI-Codex%20Plugin-green.svg)](.codex-plugin/plugin.json)
 [![Skills.sh](https://img.shields.io/badge/Skills.sh-Registered-orange.svg)](.skills.json)
 [![Bun](https://img.shields.io/badge/Bun-1.3+-fbf0df.svg?logo=bun)](package.json)
 
-An independent, MIT-licensed universal knowledge and operating-skill pack for research, planning, creative, measurement, analysis, and guarded ChatGPT Ads workflows. Authored and maintained by **Mamdouh Aboammar**.
+An independent, MIT-licensed toolkit for sourced research, native read-only account analysis, campaign planning, measurement diagnostics, and guarded ChatGPT Ads agent workflows. Authored and maintained by **Mamdouh Aboammar**.
 
-It provides zero-vendor-lockin multi-agent support across **OpenAI Codex**, **Claude Code / Desktop**, **Google Antigravity / Gemini CLI**, **Cursor**, and **Skills.sh**. It is not an official OpenAI product, integration, or live endorsement.
+It provides zero-vendor-lockin multi-agent support across **OpenAI Codex**, **Claude Code / Desktop**, **Google Antigravity / Gemini CLI**, **Cursor**, and **Skills.sh**. It is not an official OpenAI product or endorsement.
+
+## Capability status
+
+**Works locally:** deterministic Arabic/English hybrid knowledge retrieval, normalized CSV aggregate analysis, provider-neutral domain models, capability resolution, source-change comparison, and the product CLI.
+
+**Implemented but account-unverified:** the read-only OpenAI Advertiser API adapter for account metadata, campaign/ad-group/ad lists, delivery insights, conversion event settings/sources, and conversion insights. Configure it only through `OPENAI_ADS_API_KEY`; synthetic contract tests do not prove access for any account.
+
+**Experimental:** native CSV adaptation still requires a sanitized genuine native export and reviewed mapping.
+
+**Not available:** campaign writes, live action automation, and scheduling. A documented or configured capability is not proof of delivery, attribution, or account enablement.
 
 ---
 
@@ -20,33 +30,22 @@ It provides zero-vendor-lockin multi-agent support across **OpenAI Codex**, **Cl
 
 ```mermaid
 flowchart TD
-    User["User Intent / Advertising Brief"] --> Router["SKILL.md Master Orchestrator"]
-
-    subgraph Hub ["Universal Agent Connectors"]
-        Claude["Claude Code & Marketplace"]
-        Codex["OpenAI Codex Plugin"]
-        Cursor["Skills.sh & Cursor Hub"]
-        Gemini["Antigravity & Gemini CLI"]
-    end
-
-    Hub --> Router
-
-    subgraph Skills ["ChatGPT Ads Domain Skills"]
-        Router --> Research["chatgpt-ads-research"]
-        Router --> Readiness["chatgpt-ads-readiness"]
-        Router --> Plan["chatgpt-ads-plan"]
-        Router --> Creative["chatgpt-ads-creative"]
-        Router --> Measurement["chatgpt-ads-measurement"]
-        Router --> Operate["chatgpt-ads-operate"]
-        Router --> Monitor["chatgpt-ads-monitor"]
-        Router --> Policy["chatgpt-ads-policy"]
-    end
-
-    subgraph Core ["Guarded Runtime & Knowledge Engine"]
-        Research --> Ledger["Sourced Evidence Ledger"]
-        Operate --> SafeIO["scripts/safe_io.py (O_NOFOLLOW)"]
-        SafeIO --> Locks["Local Checkpoint Locks"]
-    end
+    User["User / Agent"] --> Orchestrator["CLI and Skill Orchestrator"]
+    Orchestrator --> Resolver["Capability Resolver"]
+    Resolver --> Host["Host Adapter: unavailable unless detected"]
+    Resolver --> API["Advertiser API: read-only, account-unverified"]
+    Resolver --> NativeCSV["Native CSV: requires genuine sample"]
+    Resolver --> NormalizedCSV["manual-normalized-v1"]
+    Resolver --> Knowledge["Arabic/English sourced retrieval"]
+    Host --> Domain["Normalized Ads Domain"]
+    API --> Domain
+    NativeCSV --> Domain
+    NormalizedCSV --> Domain
+    Domain --> Analytics["Deterministic Analytics"]
+    Domain --> Measurement["Measurement Context"]
+    Knowledge --> Recommendations["Evidence-gated Recommendations"]
+    Analytics --> Recommendations
+    Measurement --> Recommendations
 ```
 
 ---
@@ -56,11 +55,7 @@ flowchart TD
 Install and distribute across your preferred AI agent environment:
 
 ### 1. Claude Code & Claude Desktop
-Install directly via Claude Code or register through the marketplace manifest:
-```bash
-# Register via marketplace.json or link directly
-mkdir -p ~/.claude/skills && cp -r . ~/.claude/skills/chatgpt-ads
-```
+Register through `marketplace.json`, or use the staged runtime installer below. Do not copy the development checkout into a skill directory.
 
 ### 2. Skills.sh (Vercel & Multi-Agent)
 ```bash
@@ -68,20 +63,28 @@ npx skills add imMamdouhaboammar/chatgpt-ads
 ```
 
 ### 3. OpenAI Codex Plugin
-Configured natively through [.codex-plugin/plugin.json](.codex-plugin/plugin.json). Point Codex directly to this repository or copy to `~/.codex/skills/chatgpt-ads`.
+Configured through [.codex-plugin/plugin.json](.codex-plugin/plugin.json). Use the staged runtime installer rather than copying the development checkout.
 
 ### 4. Universal One-Liner Installer
 Automatically detects and installs into Claude Code, Antigravity/Gemini CLI, Codex, and Universal Agent Kernel (`~/.agents/skills`):
 ```bash
+./install.sh --dry-run
 ./install.sh
+# Explicit upgrade preserves the prior installation as a sibling backup:
+./install.sh --upgrade
 ```
 
 ### 5. Bun & Node CLI
 ```bash
 # Run commands directly with Bun
-bun bin/cli.js list-skills
+bun bin/cli.js capabilities --json
+bun bin/cli.js account status
+bun bin/cli.js campaigns list
+bun bin/cli.js report --level campaign --last 30d
+bun bin/cli.js conversions settings
+bun bin/cli.js research "قياس التحويلات"
+bun bin/cli.js analyze path/to/manual-normalized-v1.csv --json
 bun bin/cli.js doctor
-bun bin/cli.js query "attribution modeling"
 ```
 
 ### 6. Python Source Environment

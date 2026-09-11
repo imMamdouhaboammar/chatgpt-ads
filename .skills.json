@@ -1,7 +1,7 @@
 {
   "$schema": "https://skills.sh/schema.json",
   "name": "chatgpt-ads",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Universal AI agent skill pack for ChatGPT Ads research, strategy, creative, measurement, and guarded operations.",
   "repository": "https://github.com/imMamdouhaboammar/chatgpt-ads",
   "author": "Mamdouh Aboammar",

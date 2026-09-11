@@ -1,0 +1,9 @@
+# Runtime package exclusions
+**/__pycache__/
+**/*.py[cod]
+.planning/
+.ecc/
+.git/
+ChatGPT Image*
+*.zip
+*.tar.gz

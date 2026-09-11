@@ -36,6 +36,18 @@ jobs:
           python acceptance/workflows/verify.py
           python acceptance/measurement/run_offline_cases.py
           python scripts/doctor.py
+          python -m pip wheel . --no-deps --wheel-dir .ci-dist
+          python -m venv .ci-wheel
+          .ci-wheel/bin/python -m pip install .ci-dist/chatgpt_ads_brain-*.whl
+          .ci-wheel/bin/python -c "import chatgpt_ads_brain; print(chatgpt_ads_brain.__version__)"
+          node bin/cli.js --help
+          node bin/cli.js list-skills
+          node bin/cli.js research "قياس التحويلات" --json
+          npm pack --pack-destination .ci-dist
+          tar -tzf .ci-dist/chatgpt-ads-brain-*.tgz | grep -E 'package/pyproject.toml|package/.skills.json'
+          install_home="$(mktemp -d)"
+          HOME="$install_home" bash install.sh --target "$install_home/chatgpt-ads"
+          (cd "$install_home/chatgpt-ads" && python -m chatgpt_ads_brain validate)
       - name: Check the documented Windows capability boundary
         if: runner.os == 'Windows'
         run: |

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 - 2026-09-11
+
+- Added deterministic offline Arabic/English hybrid retrieval with advertising aliases while retaining freshness and contradiction gates.
+- Added provider-neutral domain models, an inspectable capability resolver, and explicit missing-versus-zero measurement semantics.
+- Added an account-unverified, read-only OpenAI Advertiser API adapter with environment-only authentication, bounded retries, pagination, structured redacted errors, response validation, and synthetic contract tests.
+- Added account, campaign, insight, conversion, capability, diagnosis, research, normalized analysis, and doctor commands to the product CLI with stable JSON output.
+- Added offline source snapshot comparison and explicit claim-review transitions. No source change automatically rewrites a canonical claim.
+- Native CSV still requires a genuine sanitized sample. Campaign writes, live action automation, and scheduling remain unavailable.
+
 ## 0.4.0 - 2026-09-11
 
 Authored and copyrighted by Mamdouh Aboammar. Establishes full multi-agent distribution across OpenAI Codex, Claude Marketplace, Skills.sh, and Universal Agent Kernel:
